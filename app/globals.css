@@ -1,26 +1,835 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #d4d4d4;
+  --dark-text-tertiary: #a3a3a3;
+  --dark-borders-secondary: #404040;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-serif: var(--font-instrument-serif);
+  --font-mono: var(--font-manrope);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+html,
+body {
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: var(--font-dm-sans), Arial, Helvetica, sans-serif;
+  font-feature-settings: "opsz" 14;
+}
+
+/* ── Responsive canvas: 1440px design scales proportionally ─────── */
+/* CSS `zoom` shrinks both visual size AND layout box. */
+.canvas-1440 {
+  width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+html, body { overflow-x: hidden; }
+
+/* Reserve space above the canvas so the fixed header doesn't overlap
+   the first fold once the canvas is zoomed down. At full desktop scale
+   (≥1440px) the original 101px hero offset is enough — no padding needed. */
+.page-shell { padding-top: 0; }
+@media (max-width: 1439px) { .page-shell { padding-top: 24px; } }
+@media (max-width: 1180px) { .page-shell { padding-top: 40px; } }
+@media (max-width: 1024px) { .page-shell { padding-top: 54px; } }
+@media (max-width:  900px) { .page-shell { padding-top: 64px; } }
+@media (max-width:  768px) { .page-shell { padding-top: 76px; } }
+@media (max-width:  600px) { .page-shell { padding-top: 72px; } }
+@media (max-width:  480px) { .page-shell { padding-top: 68px; } }
+@media (max-width:  390px) { .page-shell { padding-top: 64px; } }
+
+/* Tiered zoom by breakpoint — each step targets a specific viewport
+   so the 1440px design fits without horizontal scroll. */
+@media (max-width: 1439px) { .canvas-1440 { zoom: 0.95; } }
+@media (max-width: 1366px) { .canvas-1440 { zoom: 0.92; } }
+@media (max-width: 1280px) { .canvas-1440 { zoom: 0.86; } }
+@media (max-width: 1180px) { .canvas-1440 { zoom: 0.80; } }
+@media (max-width: 1080px) { .canvas-1440 { zoom: 0.73; } }
+@media (max-width: 1024px) { .canvas-1440 { zoom: 0.69; } }
+@media (max-width:  960px) { .canvas-1440 { zoom: 0.64; } }
+@media (max-width:  900px) { .canvas-1440 { zoom: 0.61; } }
+@media (max-width:  834px) { .canvas-1440 { zoom: 0.56; } }
+@media (max-width:  768px) { .canvas-1440 { zoom: 0.51; } }
+@media (max-width:  700px) { .canvas-1440 { zoom: 0.47; } }
+
+@media (max-width:  640px) { .canvas-1440 { zoom: 0.50; } }
+/* PHONE (≤600px): NO zoom, natural flow layout — see overrides below */
+
+/* On phone widths, allow horizontal panning + give 16px outer padding.
+   Boost small-text classes so the smallest body text renders close to
+   the 12px ceiling after zoom. Larger headings cap at 12px too. */
+@media (max-width: 640px) {
+  /* Generic flow for about / archives pages (no mobile component yet) */
+  .canvas-1440 {
+    zoom: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .canvas-1440 > div {
+    position: relative !important;
+    left: 0 !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    translate: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+  }
+  .canvas-1440 [class*="translate"] { translate: none !important; }
+
+  /* About page overrides */
+  .canvas-1440 .about-hero {
+    flex-direction: column !important;
+    padding: 40px 16px !important;
+    gap: 24px !important;
+  }
+  .canvas-1440 .about-hero > div:first-child { width: 100% !important; }
+  .canvas-1440 .about-hero > div:last-child {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 388/529;
+  }
+  .canvas-1440 .about-hero .gap-\[112px\] { flex-wrap: wrap !important; gap: 24px !important; }
+
+  .canvas-1440 .about-ai {
+    flex-direction: column !important;
+    padding: 40px 16px !important;
+    gap: 24px !important;
+  }
+  .canvas-1440 .about-ai > div:first-child { width: 100% !important; }
+  .canvas-1440 .about-ai .gap-\[14px\] { flex-direction: column !important; width: 100% !important; }
+  .canvas-1440 .about-ai .claude-bubble,
+  .canvas-1440 .about-ai .about-claude-dog { display: none !important; }
+
+  .canvas-1440 .about-experience {
+    flex-direction: column !important;
+    padding: 40px 16px !important;
+    gap: 32px !important;
+  }
+  .canvas-1440 .about-experience > div:first-child { width: 100% !important; }
+  .canvas-1440 .about-experience > div:last-child { width: 100% !important; }
+
+  .canvas-1440 .about-gallery-bg { display: none !important; }
+  .canvas-1440 .about-offclock {
+    flex-direction: column !important;
+    padding: 40px 16px 0 !important;
+    gap: 24px !important;
+  }
+  .canvas-1440 .about-marquee-1,
+  .canvas-1440 .about-marquee-2 {
+    width: 100% !important;
+    padding: 0 !important;
+    overflow-x: auto !important;
+  }
+  .canvas-1440 .about-contact {
+    flex-direction: column !important;
+    padding: 40px 16px !important;
+    gap: 24px !important;
+  }
+
+  /* Archives page overrides */
+  .canvas-1440 .archives-hero {
+    width: 100% !important;
+    padding: 40px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+  }
+  .canvas-1440 .archives-s01 {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+  }
+  .canvas-1440 .archives-s01 > div:first-child { width: 100% !important; }
+  .canvas-1440 .archives-s01 > div:last-child {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 518/777;
+    margin-top: 20px;
+  }
+  .canvas-1440 .archives-s02 {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+    gap: 20px !important;
+  }
+  .canvas-1440 .archives-s02 > div:first-child { width: 100% !important; }
+  .canvas-1440 .archives-s02-bubbles { display: none !important; }
+  .canvas-1440 .archives-s03 {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+    gap: 20px !important;
+  }
+  .canvas-1440 .archives-s04 {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+    gap: 20px !important;
+  }
+  .canvas-1440 .archives-s05 {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+  }
+  .canvas-1440 .archives-bottom {
+    width: 100% !important;
+    padding: 24px 16px !important;
+    left: 0 !important;
+    top: auto !important;
+    position: relative !important;
+  }
+  .canvas-1440 .archives-bottom .gap-\[40px\] { flex-direction: column !important; }
+  .canvas-1440 .archives-bottom .gap-\[24px\] { flex-direction: column !important; }
+}
+
+/* ── Top Navigation — fixed across viewports, lives outside the canvas ── */
+.top-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  pointer-events: none;
+  width: 100%;
+}
+
+/* Decorative warm gradient glow behind the bar (centered, 1440 max) */
+.top-nav-blur {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1440px;
+  height: 89px;
+  background: linear-gradient(to right, rgba(255, 0, 4, 0.24), rgba(174, 0, 105, 0.24));
+  filter: blur(95px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* The actual nav bar — centered with max-width 1440, frosted glass */
+.top-nav-bar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 40px 16px;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(82px);
+  -webkit-backdrop-filter: blur(82px);
+  pointer-events: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.top-nav-logo {
+  font-family: var(--font-instrument-serif), serif;
+  font-style: italic;
+  font-size: 24px;
+  color: #dba80e;
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
+  animation: fadeIn 1.2s ease-out both;
+}
+
+.top-nav-links {
+  align-items: center;
+  gap: 16px;
+  animation: fadeIn 1.2s ease-out both;
+  animation-delay: 120ms;
+}
+
+.top-nav-links .nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #f5f5f5;
+  text-decoration: none;
+  white-space: nowrap;
+  background: transparent;
+  border-radius: 0;
+  transition: color 0.2s;
+}
+
+/* Rust-colored underline that animates in from the left on hover */
+.top-nav-links .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 1px;
+  background: #e8643a;
+  transform: scaleX(0);
+  transform-origin: 0;
+  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.top-nav-links .nav-link:hover,
+.top-nav-links .nav-link:focus-visible {
+  color: #ffffff;
+  background: transparent;
+}
+.top-nav-links .nav-link:hover::after,
+.top-nav-links .nav-link:focus-visible::after,
+.top-nav-links .nav-link.is-active::after {
+  transform: scaleX(1);
+}
+.top-nav-links .nav-link.is-active {
+  color: #ffffff;
+}
+.top-nav-links .nav-link:focus-visible { outline: none; }
+
+
+@media (max-width: 1024px) {
+  .top-nav-bar { padding: 22px 28px 14px; }
+}
+@media (max-width: 600px) {
+  .top-nav-bar { padding: 18px 22px 14px; }
+  .top-nav-logo { font-size: 20px !important; }
+}
+
+/* ── Mobile drawer ───────────────────────────────────────────────── */
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mobile-nav-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-nav-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 75vw;
+  height: 100dvh;
+  height: 100vh;
+  z-index: 201;
+  background: linear-gradient(180deg, #0e0a08 0%, #0a0a0a 60%);
+  box-shadow:
+    -32px 0 80px rgba(0, 0, 0, 0.55),
+    -8px 0 24px rgba(218, 168, 14, 0.06),
+    inset 1px 0 0 rgba(255, 255, 255, 0.04);
+  transform: translateX(100%);
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 26px 28px 36px;
+  overflow: hidden;
+}
+.mobile-nav-drawer.is-open {
+  transform: translateX(0);
+}
+/* Subtle red/pink glow at top of drawer to echo the header blur */
+.mobile-nav-drawer::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  left: -40px;
+  right: -40px;
+  height: 240px;
+  background: linear-gradient(135deg, rgba(255, 0, 4, 0.22), rgba(174, 0, 105, 0.18) 60%, transparent 100%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.drawer-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 56px;
+}
+
+.drawer-logo {
+  font-family: var(--font-instrument-serif), serif;
+  font-style: italic;
+  font-size: 24px;
+  color: #dba80e;
+  line-height: 1;
+}
+
+.drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  color: #fff;
+  cursor: pointer;
+  transition: color 220ms ease, border-color 220ms ease, background-color 220ms ease, transform 220ms ease;
+}
+.drawer-close:hover {
+  color: #dba80e;
+  border-color: rgba(218, 168, 14, 0.5);
+  background-color: rgba(218, 168, 14, 0.08);
+  transform: rotate(90deg);
+}
+
+.drawer-links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.drawer-link {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 4px;
+  font-family: var(--font-instrument-serif), serif;
+  font-style: italic;
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  transform: translateX(16px);
+  transition: color 240ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 360ms ease;
+}
+.mobile-nav-drawer.is-open .drawer-link {
+  opacity: 1;
+  transform: translateX(0);
+}
+.drawer-link:hover {
+  color: #dba80e;
+}
+.drawer-link.is-active {
+  color: #dba80e;
+}
+.drawer-link-arrow {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-style: normal;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 220ms ease, transform 320ms cubic-bezier(0.34, 1.7, 0.4, 1);
+}
+.drawer-link:hover .drawer-link-arrow {
+  color: #dba80e;
+  transform: translate(2px, -2px);
+}
+
+.drawer-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 24px;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.32);
+  letter-spacing: 0.5px;
+}
+.drawer-foot-line {
+  font-variant-numeric: tabular-nums;
+}
+
+/* On laptop+ keep the drawer completely out of layout */
+@media (min-width: 1025px) {
+  .mobile-nav-backdrop,
+  .mobile-nav-drawer {
+    display: none !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+/* ── Keyframes ──────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: translate3d(0, -6px, 0) rotate(-0.4deg); }
+}
+@keyframes floatAlt {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: translate3d(2px, -4px, 0) rotate(0.5deg); }
+}
+@keyframes pulseSoft {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Utilities ──────────────────────────────────────────────────── */
+.anim-fade-up   { animation: fadeUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-fade-in   { animation: fadeIn 1.2s ease-out both; }
+.anim-float     { animation: float 5s ease-in-out infinite; will-change: transform; }
+.anim-float-alt { animation: floatAlt 6.5s ease-in-out infinite; will-change: transform; }
+.anim-pulse-soft{ animation: pulseSoft 4s ease-in-out infinite; will-change: transform, opacity; }
+.anim-bubble-in { animation: bubbleIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Archives popsicle dog — static (no animation) */
+
+/* Yellow speech bubbles — big alternating wiggle + scale pop + border flash */
+@keyframes archiveBubbleA {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  10%      { transform: rotate(-9deg) scale(1.14); }
+  20%      { transform: rotate(7deg)  scale(1.08); }
+  30%      { transform: rotate(-4deg) scale(1.04); }
+  40%      { transform: rotate(0deg)  scale(1); }
+}
+@keyframes archiveBubbleB {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  10%      { transform: rotate(9deg)  scale(1.14); }
+  20%      { transform: rotate(-7deg) scale(1.08); }
+  30%      { transform: rotate(4deg)  scale(1.04); }
+  40%      { transform: rotate(0deg)  scale(1); }
+}
+@keyframes archiveBubbleBorder {
+  0%, 100% { border-color: #8b6800; box-shadow: 0 0 0 0 rgba(255, 220, 100, 0); }
+  15%      { border-color: #fff3a8; box-shadow: 0 0 0 8px rgba(255, 220, 100, 0.35); }
+  35%      { border-color: #f3c84a; box-shadow: 0 0 0 0 rgba(255, 220, 100, 0); }
+}
+.archive-bubble-a {
+  transform-origin: 100% 100%;
+  animation:
+    archiveBubbleA 3.6s cubic-bezier(0.34, 1.5, 0.45, 1) infinite,
+    archiveBubbleBorder 3.6s ease-out infinite;
+  will-change: transform, border-color, box-shadow;
+}
+.archive-bubble-b {
+  transform-origin: 0% 0%;
+  animation:
+    archiveBubbleB 3.6s cubic-bezier(0.34, 1.5, 0.45, 1) infinite,
+    archiveBubbleBorder 3.6s ease-out infinite;
+  animation-delay: 0.9s, 0.9s;
+  will-change: transform, border-color, box-shadow;
+}
+
+/* Footer contact links — subtle bg at rest, smooth fade on hover */
+.contact-link {
+  background-color: rgba(255, 255, 255, 0.025);
+  transition: background-color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.contact-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* About page interactions ───────────────────────────────────────── */
+
+/* Stat boxes & principle cards — staggered fade-up entry */
+@keyframes aboutFadeUp {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.about-fade-up {
+  animation: aboutFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Principle card hover — gentle lift + brighter border */
+.about-principle {
+  transition: transform 350ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 350ms ease;
+}
+.about-principle:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.55);
+}
+
+/* Casper-Claude dog (section 2) — periodic head-tilt */
+@keyframes claudeDogTilt {
+  0%, 78%, 100% { transform: rotate(-18.52deg); }
+  84%           { transform: rotate(-12deg) translateY(-3px); }
+  90%           { transform: rotate(-22deg) translateY(-1px); }
+}
+.about-claude-dog {
+  animation: claudeDogTilt 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Yellow speech bubbles — gentle wiggle loop */
+@keyframes aboutBubbleWiggle {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  93%           { transform: rotate(-3deg); }
+  96%           { transform: rotate(2deg); }
+}
+.about-bubble {
+  transform-origin: 50% 100%;
+  animation: aboutBubbleWiggle 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Experience cards — hover lift + warmer border */
+.about-exp-card {
+  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1), border-color 320ms ease, box-shadow 320ms ease;
+}
+.about-exp-card:hover {
+  transform: translateY(-3px);
+  border-color: #3a2c25;
+  box-shadow: 0 14px 30px -10px rgba(232, 100, 58, 0.25);
+}
+
+/* Skill chips — "land into stack" entrance, fires when the cluster scrolls into view */
+@keyframes skillEnter {
+  0%   { opacity: 0; transform: translate(0, -120px) scale(0.4) rotate(-8deg); }
+  60%  { opacity: 1; transform: translate(0, 8px)    scale(1.06) rotate(2deg); }
+  85%  { opacity: 1; transform: translate(0, -2px)   scale(0.99) rotate(-1deg); }
+  100% { opacity: 1; transform: translate(0, 0)      scale(1)    rotate(0deg); }
+}
+/* Default rest state — invisible, waiting to trigger */
+.skill-enter {
+  opacity: 0;
+  transform: translate(0, -120px) scale(0.4);
+  will-change: transform, opacity;
+}
+/* Once the cluster is in view, run the animation with stagger via nth-child */
+.skills-cluster.in-view .skill-enter {
+  animation: skillEnter 0.9s cubic-bezier(0.34, 1.6, 0.4, 1) forwards;
+}
+.skills-cluster.in-view > .skill-enter:nth-child(1)  { animation-delay: 0ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(2)  { animation-delay: 80ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(3)  { animation-delay: 160ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(4)  { animation-delay: 240ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(5)  { animation-delay: 320ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(6)  { animation-delay: 400ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(7)  { animation-delay: 480ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(8)  { animation-delay: 560ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(9)  { animation-delay: 640ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(10) { animation-delay: 720ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(11) { animation-delay: 800ms; }
+.skills-cluster.in-view > .skill-enter:nth-child(12) { animation-delay: 880ms; }
+
+/* "& always learning more" — drops in with the same bounce as the skill chips, after the last chip lands */
+.learning-more {
+  opacity: 0;
+  transform: translate(0, -120px) scale(0.4);
+}
+.skills-cluster.in-view + .learning-more {
+  animation: skillEnter 0.9s cubic-bezier(0.34, 1.6, 0.4, 1) 1900ms forwards;
+}
+
+/* Skill chips — hover changes border color to orange #E8612C with a soft same-color outer glow */
+.about-skill {
+  cursor: pointer;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+  transition: outline-color 220ms ease, box-shadow 220ms ease;
+}
+.about-skill:hover {
+  outline-color: #E8612C;
+  box-shadow: 0 0 24px -4px rgba(232, 97, 44, 0.3);
+}
+
+/* "Claude doesn't fetch. I'm losing my mind." bubble — dramatic frustration shake (matches the line) */
+@keyframes claudeBubbleShake {
+  0%, 70%, 100% { transform: rotate(0deg) scale(1); border-color: #8b6800; }
+  74%           { transform: rotate(-6deg) scale(1.06); border-color: #ffe066; }
+  78%           { transform: rotate(7deg)  scale(1.07); border-color: #ffe066; }
+  82%           { transform: rotate(-5deg) scale(1.05); border-color: #f3c84a; }
+  86%           { transform: rotate(4deg)  scale(1.04); border-color: #f3c84a; }
+  90%           { transform: rotate(-2deg) scale(1.02); border-color: #dba80e; }
+  94%           { transform: rotate(1deg)  scale(1.01); border-color: #dba80e; }
+}
+.claude-bubble {
+  transform-origin: 50% 50%;
+  animation: claudeBubbleShake 4s ease-in-out infinite;
+  will-change: transform, border-color;
+}
+
+/* Pink dog footer sticker — slow sway */
+@keyframes pinkDogSway {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(2deg); }
+}
+.about-pink-dog {
+  transform-origin: 50% 100%;
+  animation: pinkDogSway 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Contact pills (footer) — hover border glow + lift */
+.about-pill {
+  transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+.about-pill:hover {
+  transform: translateY(-2px);
+  border-color: #f3c84a;
+  box-shadow: 0 0 0 1px rgba(243, 200, 74, 0.4), 0 12px 24px -10px rgba(243, 200, 74, 0.4);
+}
+
+/* About page photo marquee — continuous horizontal scroll */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marqueeReverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+/* SVG group marquee — translates by exactly (svg-width + gap) so the loop is seamless with 24px gap */
+@keyframes marqueeGroup {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-2240px); }
+}
+@keyframes marqueeGroupReverse {
+  0%   { transform: translateX(-2240px); }
+  100% { transform: translateX(0); }
+}
+/* Individual-photo marquee — 10 photos × 200 + 9 internal gaps × 24 + 24 between copies = 2240 */
+@keyframes photoRow {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-2240px); }
+}
+@keyframes photoRowReverse {
+  0%   { transform: translateX(-2240px); }
+  100% { transform: translateX(0); }
+}
+
+/* Bottom archives black bubbles — gentle float up and down (no layout change) */
+@keyframes archiveFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.archive-bubble-float {
+  animation: archiveFloat 3.6s ease-in-out infinite;
+  will-change: transform;
+}
+.archive-bubble-float.delayed {
+  animation-delay: 1.8s;
+}
+
+/* Casper sticker — interactive hover: playful tilt + gold glow ring */
+.casper-sticker {
+  transform-origin: 50% 100%;
+  cursor: pointer;
+  transition:
+    transform 360ms cubic-bezier(0.34, 1.7, 0.4, 1),
+    box-shadow 360ms ease;
+  box-shadow: 0 0 0 0 rgba(219, 168, 14, 0);
+}
+.casper-sticker:hover {
+  transform: rotate(-6deg) scale(1.08) translateY(-2px);
+  box-shadow:
+    0 0 0 8px rgba(219, 168, 14, 0.22),
+    0 16px 32px -8px rgba(219, 168, 14, 0.55);
+}
+
+/* Speech bubble — wiggle on loop (rotates back-and-forth, anchored from the corner) */
+/* Casper bubbles share the same anim-bubble-in entrance and anim-float idle
+   as the Aditi bubble — applied via JSX className, not here. */
+
+/* Nav link — animated underline */
+.nav-link {
+  position: relative;
+  transition: color 200ms ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 1px;
+  background: #e8643a;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.nav-link:hover            { color: #fff; }
+.nav-link:hover::after     { transform: scaleX(1); }
+
+/* Project card hover — image zooms inside the card frame */
+.project-card {
+  transition: border-color 350ms ease, transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.project-card:hover { border-color: #3a2c25; transform: translateY(-2px); }
+.project-card .card-image {
+  transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.project-card:hover .card-image { transform: scale(1.04); }
+
+/* "View project" pill — arrow nudges */
+.pill-arrow { display: inline-block; transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.pill:hover .pill-arrow { transform: translate(2px, -2px); }
+
+/* "More about me" CTA — arrow lifts */
+.cta-arrow { display: inline-block; transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.cta-pill:hover .cta-arrow { transform: translate(4px, -4px); }
+.cta-pill { transition: background-color 240ms ease; }
+.cta-pill:hover { background-color: #3a2620; }
+
+/* Contact row — icon nudges, title shifts toward orange */
+.contact-row .contact-icon { transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.contact-row:hover .contact-icon { transform: translateX(3px) scale(1.04); }
+.contact-row .contact-title { transition: color 240ms ease; }
+.contact-row:hover .contact-title { color: #e8643a; }
+
+/* Italic gold accents in headings — subtle shimmer on hover */
+.gold-accent {
+  background: linear-gradient(90deg, #dba80e 0%, #f3c84a 50%, #dba80e 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: background-position 600ms ease;
+}
+.gold-accent:hover { background-position: 100% 0; }

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "figma": {
+      "type": "remote",
+      "url": "https://mcp.figma.com/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer figd_tbtq-l-AWohsG9lscVMnKopYWnSS19XRU-nafw43"
+      }
+    }
+  }
+}
