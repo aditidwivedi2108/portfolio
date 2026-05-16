@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "https://www.aditidwivedi.com/:path*",
+      "destination": "https://aditidwivedi.com/:path*",
+      "permanent": true
+    }
+  ]
+}
